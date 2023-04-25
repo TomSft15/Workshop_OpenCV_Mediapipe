@@ -35,6 +35,7 @@ def main():
                     h, w, _ = image.shape
                     cx, cy = int(data_point.x * w), int(data_point.y * h)
                     face_position.append([id, cx, cy])
+                    print(id, cx, cy)
                 for face_landmarks in results.multi_face_landmarks:
                     mp_drawing.draw_landmarks(
                         image=image,
