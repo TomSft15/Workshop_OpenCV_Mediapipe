@@ -2,29 +2,6 @@ import cv2
 import mediapipe as mp
 import os
 
-def displayFinger(image, nbFinger, overlayList):
-    if (nbFinger > 0):
-        if (nbFinger == 1):
-            overlayList[3] = cv2.resize(overlayList[3], (200, 200))
-            x, y, _ = overlayList[3].shape
-            image[0:x, 0:y] = overlayList[3]
-        if (nbFinger == 2):
-            overlayList[4] = cv2.resize(overlayList[4], (200, 200))
-            x, y, _ = overlayList[4].shape
-            image[0:x, 0:y] = overlayList[4]
-        if (nbFinger == 3):
-            overlayList[2] = cv2.resize(overlayList[2], (200, 200))
-            x, y, _ = overlayList[2].shape
-            image[0:x, 0:y] = overlayList[2]
-        if (nbFinger == 4):
-            overlayList[0] = cv2.resize(overlayList[0], (200, 200))
-            x, y, _ = overlayList[0].shape
-            image[0:x, 0:y] = overlayList[0]
-        if (nbFinger == 5):
-            overlayList[1] = cv2.resize(overlayList[1], (200, 200))
-            x, y, _ = overlayList[1].shape
-            image[0:x, 0:y] = overlayList[1]
-
 def nbFingerUp(hand_position):
     tipIds = [4, 8, 12, 16, 20]
     finger = []
@@ -38,7 +15,6 @@ def nbFingerUp(hand_position):
         else:
             finger.append(0)
     nbFinger = finger.count(1)
-    print(finger)
     return finger
 
 def getfiles(path):
@@ -47,18 +23,24 @@ def getfiles(path):
         myList[i] = path + myList[i]
     return myList
 
-def handleSign(tabFingers, hand_position):
+def handleSign(tabFingers, hand_position, image):
     if (tabFingers.count(1) == 5):
-        print("HELLO")
+        cv2.putText(image, "HELLO",(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     elif (tabFingers[2] == 1 and tabFingers[1] == 0 and
         tabFingers[3] == 0 and tabFingers[4] == 0):
-        print("FUCK YOU")
+        cv2.putText(image, "FUCK YOU",(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    elif (tabFingers[1] == 1 and tabFingers[4] == 1):
+        if ((hand_position[8][2] < hand_position[12][2] and hand_position[20][2] < hand_position[12][2])
+            and (hand_position[8][2] < hand_position[16][2] and hand_position[20][2] < hand_position[16][2])):
+            cv2.putText(image, "LOVE",(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    elif (tabFingers.count(0) == 5):
+        cv2.putText(image, "WAKANDA",(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     else:
         for i in range(len(hand_position)):
             if (hand_position[4][2] > hand_position[i][2]):
-                print("NULL")
-            else:
-                print("GOOD")
+                cv2.putText(image, "BAD",(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            elif (hand_position[4][2] < hand_position[i][2]):
+                cv2.putText(image, "GOOD",(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
 def main():
     hand_position = []
@@ -104,10 +86,8 @@ def main():
                     hand_position.append([id, cx, cy])
                     if (len(hand_position) == 21):
                         tabFinger = nbFingerUp(hand_position)
-                        handleSign(tabFinger, hand_position)
+                        handleSign(tabFinger, hand_position, image)
                         hand_position = []
-                        
-                        #displayFinger(image, nbFinger, overlayList)
             # Flip the image horizontally for a selfie-view display.
             cv2.imshow('MediaPipe Hands', image)
             if cv2.waitKey(5) & 0xFF == ord("q"):
