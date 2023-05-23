@@ -34,7 +34,7 @@ def handleSign(tabFingers, hand_position, image):
             and (hand_position[8][2] < hand_position[16][2] and hand_position[20][2] < hand_position[16][2])):
             cv2.putText(image, "LOVE",(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     elif (tabFingers.count(0) == 5):
-        cv2.putText(image, "WAKANDA",(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(image, "BLM",(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     else:
         for i in range(len(hand_position)):
             if (hand_position[4][2] > hand_position[i][2]):
